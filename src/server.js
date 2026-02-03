@@ -1,14 +1,18 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { query, pool, setOrgContext } = require('./database');
-const { verifyIngestKey, generateToken, verifyToken } = require('./auth');
+const { query } = require('./database');
+const { verifyIngestKey, verifyToken } = require('./auth');
+const routes = require('./routes');
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Use all routes
+app.use(routes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -61,7 +65,7 @@ app.get('/v1/metrics', async (req, res) => {
       return res.status(401).json({ error: 'Invalid or expired token' });
     }
 
-    const { metric_name, service_name, timerange } = req.query;
+    const { metric_name, service_name } = req.query;
     
     // Build query
     let sql = 'SELECT * FROM metrics WHERE organization_id = $1';
