@@ -1,0 +1,23 @@
+# Terraform
+*.tfstate*
+.terraform/
+.terraform.lock.hcl
+terraform.tfvars
+
+# Environment
+.env
+.env.local
+
+# Backend
+node_modules/
+__pycache__/
+*.pyc
+venv/
+
+# IDE
+.DS_Store
+.vscode/settings.json
+
+# Logs
+*.log
+npm-debug.log
