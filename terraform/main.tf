@@ -16,7 +16,6 @@ provider "aws" {
       Environment = var.environment
       Project     = "observability-platform"
       ManagedBy   = "Terraform"
-      CreatedAt   = timestamp()
     }
   }
 }

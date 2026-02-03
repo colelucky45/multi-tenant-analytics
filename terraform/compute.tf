@@ -29,7 +29,6 @@ locals {
     sudo apt-get install -y nodejs
     
     # Clone or pull your application code
-    # This is a placeholder - you'll need to push your code to a repo first
     cd /opt
     git clone https://github.com/your-username/multi-tenant-analytics.git app || true
     cd app
@@ -37,7 +36,7 @@ locals {
     # Install dependencies
     npm install
     
-    # Set environment variables (fetch from Parameter Store in production)
+    # Set environment variables
     export NODE_ENV=production
     export PORT=3000
     export DB_HOST=${aws_db_instance.main.endpoint}
@@ -48,7 +47,6 @@ locals {
     # Start application
     npm start > /var/log/app.log 2>&1 &
     
-    # Send signal to ALB that instance is ready
     echo "Application started"
   EOF
   )
@@ -70,14 +68,14 @@ resource "aws_launch_template" "app" {
 
   user_data = local.user_data
 
+  vpc_security_group_ids = [aws_security_group.app.id]
+
   tag_specifications {
     resource_type = "instance"
     tags = {
       Name = "${var.app_name}-instance"
     }
   }
-
-  security_groups = [aws_security_group.app.id]
 }
 
 # Application Load Balancer
@@ -149,7 +147,7 @@ resource "aws_autoscaling_group" "app" {
   tag {
     key                 = "Name"
     value               = "${var.app_name}-asg-instance"
-    propagate_launch_template = true
+    propagate_at_launch = true
   }
 
   lifecycle {

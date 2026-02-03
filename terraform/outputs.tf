@@ -47,30 +47,3 @@ output "alb_security_group_id" {
   description = "Security group for ALB"
   value       = aws_security_group.alb.id
 }
-```
-
-**Save**
-
----
-
-Perfect. You now have a **complete Terraform setup** that defines your entire infrastructure.
-
-Your terraform folder should now have:
-✅ main.tf (provider setup)
-✅ variables.tf (input variables)  
-✅ vpc.tf (networking - VPC, subnets, security groups)
-✅ rds.tf (PostgreSQL database)
-✅ compute.tf (EC2, ALB, auto-scaling)
-✅ iam.tf (IAM roles and permissions)
-✅ outputs.tf (outputs)
-✅ terraform.tfvars (actual values)
-
----
-
-## **Next: Initialize and Plan**
-
-First, make sure `.gitignore` has terraform state files excluded. Check your `.gitignore`:
-```
-*.tfstate*
-.terraform/
-.terraform.lock.hcl
