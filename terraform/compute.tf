@@ -15,40 +15,43 @@ data "aws_ami" "ubuntu" {
 }
 
 # User data script (runs on instance startup)
+# User data script (runs on instance startup)
 locals {
   user_data = base64encode(<<-EOF
-    #!/bin/bash
-    set -e
-    
-    # Update system
-    apt-get update
-    apt-get install -y curl git nodejs npm postgresql-client
-    
-    # Install Node.js if needed
-    curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-    
-    # Clone or pull your application code
-    cd /opt
-    git clone https://github.com/your-username/multi-tenant-analytics.git app || true
-    cd app
-    
-    # Install dependencies
-    npm install
-    
-    # Set environment variables
-    export NODE_ENV=production
-    export PORT=3000
-    export DB_HOST=${aws_db_instance.main.endpoint}
-    export DB_USER=${var.db_username}
-    export DB_PASSWORD=${var.db_password}
-    export DB_NAME=${var.db_name}
-    
-    # Start application
-    npm start > /var/log/app.log 2>&1 &
-    
-    echo "Application started"
-  EOF
+#!/bin/bash
+set -e
+
+# Update system
+apt-get update
+apt-get install -y curl git nodejs npm postgresql-client
+
+# Install Node.js
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Clone application code
+cd /opt
+git clone https://github.com/colelucky45/multi-tenant-analytics.git app || true
+cd app
+
+# Install dependencies
+npm install
+
+# Set environment variables
+export NODE_ENV=production
+export PORT=3000
+export DB_HOST=${aws_db_instance.main.address}
+export DB_PORT=5432
+export DB_USER=${var.db_username}
+export DB_PASSWORD=${var.db_password}
+export DB_NAME=${var.db_name}
+export JWT_SECRET=your-super-secret-key-change-this-in-production
+
+# Start application
+npm start > /var/log/app.log 2>&1 &
+
+echo "Application started"
+EOF
   )
 }
 
